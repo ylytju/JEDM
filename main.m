@@ -7,7 +7,7 @@ function main()
 % Written by Yunlong Yu, yuyunlong@tju.edu.cn
 % School of Electrical and Information Engineering,
 % Tianjin University
-% 300072£¬Tianjin
+% 300072Â£Â¬Tianjin
 %% STEP 0: Initialise parameters and load the data
 clc; clear all; close all;
 addpath('./toolbox');
@@ -15,7 +15,7 @@ addpath('./toolbox');
 dataset_path = 'fea/AwA/att'; % AwA, CUB, aPY, SUN
 Train = load(fullfile(dataset_path,'Train.mat'));
 Test  = load(fullfile(dataset_path,'Test.mat'));
-%% Parameter setting
+%% STEP 1: Parameter setting
 options.alpha = 0.1;       % 0<=alpha<=1 insensitive, keep default 0.1
 options.beta  = 0.01;       % 0<=beta<=1 insensitive, keep default 0.01
 options.code_size = 100;   % insensitive, keep default
@@ -23,7 +23,7 @@ options.rdim_num = 100;
 
 fprintf('...default params...: alpha=%d lambda=%d code_size=%d \n', options.alpha, options.beta, options.code_size);
 
-%% Pre-process
+%% STEP 2: Pre-process
 Xtr = normcol_equal(Train.im_fea);       data.Xtr = Xtr - repmat(mean(Xtr,2),1,size(Xtr,2)); 
 Ytr = normcol_equal(Train.semantic_fea); data.Ytr = Ytr - repmat(mean(Ytr,2),1,size(Ytr,2));
 Xte = normcol_equal(Test.im_fea);        data.Xte = Xte - repmat(mean(Xte,2),1,size(Xte,2));
@@ -35,13 +35,13 @@ data.index = Test.index;
 
 tic  % train time
 
-%% Dimensionality reduction
+%% STEP 3: Dimensionality reduction
 Vt       = Eigenface_f(data.Xtr,options.rdim_num);
 data.Xtr = Vt'*data.Xtr;  
 data.Xte = Vt'*data.Xte;
 
 
-%% run JEDM 
+%% STEP 5: Run JEDM 
 disp('...  Train the model  ...')
 [D_Mat, P_Mat] = TrainDPL(data, options);
 train_time = toc;
@@ -51,7 +51,7 @@ test_time = toc;
 fprintf('The JEDM accuracy is: %0.3f%%\n', meanAcc_JEDM*100);
 % save(fullfile(dataset_path,'T.mat'),'D_Mat','P_Mat','Vt');
 
-%% run TSTD
+%% STEP 6: Run TSTD
 lambdas = 100;   
 mus = 100;    
 rates = [0.4,0.6,0.8,1];  
